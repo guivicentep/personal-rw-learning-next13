@@ -17,9 +17,9 @@ async function getProduct(slug: string): Promise<Product> {
     },
   })
 
-  const products = await response.json()
+  const product = await response.json()
 
-  return products
+  return product
 }
 
 export async function generateMetadata({
@@ -30,6 +30,15 @@ export async function generateMetadata({
   return {
     title: product.title,
   }
+}
+
+export async function generateStaticParams() {
+  const response = await api('/products/featured')
+  const products: Product[] = await response.json()
+
+  return products.map((product) => {
+    return { slug: product.slug }
+  })
 }
 
 export default async function ProductPage({ params }: ProductProps) {
@@ -64,6 +73,7 @@ export default async function ProductPage({ params }: ProductProps) {
             })}
           </span>
           <span className="text-sm text-zinc-400">
+            12x de
             {(product.price / 12).toLocaleString('pt-BR', {
               style: 'currency',
               currency: 'BRL',
